@@ -1,6 +1,8 @@
-# omarchy-resizeable
+# Omarchy Resizeable
 
 Resize windows by dragging their borders. No modifier, no mode switch.
+
+![Preview Image](preview.png)
 
 An [Omarchy](https://omarchy.org) shell plugin that keeps Hyprland's
 `general:resize_on_border` on while the plugin is enabled — Omarchy ships it
