@@ -2,25 +2,23 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 
-// Service plugin: while enabled, keeps a generated drop-in in
-// ~/.local/state/omarchy/toggles/hypr/ so Hyprland's resize_on_border stays on
-// (Omarchy's default looknfeel.lua sets it off explicitly). On disable/remove
-// the drop-in is deleted and Hyprland reloaded, restoring the default.
+// Keeps Hyprland's resize_on_border on while this plugin is enabled. Omarchy
+// ships it off in default/hypr/looknfeel.lua and a runtime hyprctl change
+// doesn't survive a reload, so the setting lives in a generated toggles
+// drop-in that this service writes on start and deletes on destroy.
 Item {
   id: root
 
-  // Injected by omarchy-shell's service loader.
+  // Injected by the service loader.
   property var shell: null
   property var manifest: null
 
   readonly property string dropinDirectory: Quickshell.env("HOME") + "/.local/state/omarchy/toggles/hypr"
   readonly property string dropinPath: dropinDirectory + "/omarchy-resizable.lua"
-  // The drop-in also gates itself on the plugin id still being listed in
-  // shell.json, so a drop-in that somehow outlives disable/remove is inert on
-  // the next Hyprland reload instead of silently leaving the feature on.
-  // The id is duplicated in manifest.json; keep them in sync. The whole body
-  // is pcall'd: a toggle file that throws would abort the rest of the
-  // Hyprland config load, so failure must degrade to "feature off".
+  // Gate on our id still being in shell.json: a drop-in that outlives
+  // disable/remove must come up inert on the next reload, not silently on.
+  // Duplicated in manifest.json — keep in sync. The whole body is pcall'd
+  // because a toggle file that throws aborts the rest of the config load.
   readonly property string dropinContent:
     "-- omarchy-resizable: generated, do not edit\n" +
     "pcall(function()\n" +
@@ -103,8 +101,7 @@ Item {
   function maybeWriteDropin() {
     if (phase !== "directories" && phase !== "probe") return
     if (!directoriesReady || !liveKnown || !dropinKnown) return
-    // Already applied and persisted: leave Hyprland untouched. This is what
-    // keeps an omarchy-shell restart side-effect-free.
+    // Already applied and persisted — leave Hyprland alone.
     if (liveValue && dropinExisting === dropinContent) {
       phase = "ready"
       return
@@ -127,7 +124,7 @@ Item {
       fail("Hyprland still reports resize_on_border off after reload.")
       return
     }
-    // border_size = 0 silently disables border resize (no grab area).
+    // border_size = 0 gives border resize no grab area.
     runHyprctl(["-j", "getoption", "general:border_size"],
       "getoption border_size", "borders", bordersChecked)
   }
@@ -144,12 +141,9 @@ Item {
 
   Component.onCompleted: root.begin()
 
-  // Reached on `omarchy plugin disable` / `plugin remove` (the shell calls
-  // destroy()) and on shell exit. Children are already gone by the time this
-  // runs (id lookups throw ReferenceError), so cleanup goes through the
-  // Quickshell singleton: execDetached spawns now and disowns the child.
-  // Remove the drop-in, then reload so resize_on_border falls back to the
-  // Omarchy default.
+  // destroy() from plugin disable/remove lands here. Children are already
+  // torn down (id lookups throw ReferenceError), so go through the
+  // singleton — execDetached spawns synchronously and disowns the child.
   Component.onDestruction: {
     Quickshell.execDetached(["sh", "-c",
       "rm -f -- \"$1\" && hyprctl reload >/dev/null 2>&1 || :",

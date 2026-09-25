@@ -2,8 +2,9 @@
   "schemaVersion": 1,
   "id": "omarchy-resizable.resizable",
   "name": "Omarchy Resizable",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": "Victor Moreno",
+  "license": "MIT",
   "description": "Resize windows by dragging their borders. Keeps Hyprland's resize_on_border enabled while the plugin is.",
   "kinds": [
     "service"
