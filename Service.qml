@@ -14,13 +14,13 @@ Item {
   property var manifest: null
 
   readonly property string dropinDirectory: Quickshell.env("HOME") + "/.local/state/omarchy/toggles/hypr"
-  readonly property string dropinPath: dropinDirectory + "/omarchy-resizable.lua"
+  readonly property string dropinPath: dropinDirectory + "/omarchy-resizeable.lua"
   // Gate on our id still being in shell.json: a drop-in that outlives
   // disable/remove must come up inert on the next reload, not silently on.
   // Duplicated in manifest.json — keep in sync. The whole body is pcall'd
   // because a toggle file that throws aborts the rest of the config load.
   readonly property string dropinContent:
-    "-- omarchy-resizable: generated, do not edit\n" +
+    "-- omarchy-resizeable: generated, do not edit\n" +
     "pcall(function()\n" +
     "  local paths_ok, paths = pcall(require, \"default.hypr.paths\")\n" +
     "  local config_home = paths_ok and paths.config_home\n" +
@@ -28,11 +28,11 @@ Item {
     "  local f = io.open(config_home .. \"/omarchy/shell.json\", \"r\")\n" +
     "  local enabled = false\n" +
     "  if f then\n" +
-    "    enabled = (f:read(\"*a\") or \"\"):find('\"id\"%s*:%s*\"omarchy%-resizable%.resizable\"') ~= nil\n" +
+    "    enabled = (f:read(\"*a\") or \"\"):find('\"id\"%s*:%s*\"omarchy%-resizeable%.resizeable\"') ~= nil\n" +
     "    f:close()\n" +
     "  end\n" +
     "  if enabled then\n" +
-    "    hl.config({ general = { resize_on_border = true } }) -- omarchy-resizable\n" +
+    "    hl.config({ general = { resize_on_border = true } }) -- omarchy-resizeable\n" +
     "  end\n" +
     "end)\n"
 
@@ -50,13 +50,13 @@ Item {
 
   function notify(summary, body) {
     if (notifier.running) return
-    notifier.command = ["notify-send", "-a", "Omarchy Resizable", summary, body]
+    notifier.command = ["notify-send", "-a", "Omarchy Resizeable", summary, body]
     notifier.running = true
   }
 
   function fail(message) {
     phase = "failed"
-    console.warn("omarchy-resizable: " + message)
+    console.warn("omarchy-resizeable: " + message)
     notify("Border resize could not be enabled", message)
   }
 
@@ -147,7 +147,7 @@ Item {
   Component.onDestruction: {
     Quickshell.execDetached(["sh", "-c",
       "rm -f -- \"$1\" && hyprctl reload >/dev/null 2>&1 || :",
-      "omarchy-resizable-cleanup", dropinPath])
+      "omarchy-resizeable-cleanup", dropinPath])
   }
 
   Process {

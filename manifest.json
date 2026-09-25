@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "id": "omarchy-resizable.resizable",
-  "name": "Omarchy Resizable",
+  "id": "omarchy-resizeable.resizeable",
+  "name": "Omarchy Resizeable",
   "version": "1.0.0",
   "author": "Victor Moreno",
   "license": "MIT",

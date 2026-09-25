@@ -1,4 +1,4 @@
-# omarchy-resizable
+# omarchy-resizeable
 
 Resize windows by dragging their borders. No modifier, no mode switch.
 
@@ -11,13 +11,13 @@ windows, split-ratio resize on tiled ones.
 ## Install
 
 ```bash
-omarchy plugin add https://github.com/v3moreno/omarchy-resizable --enable
+omarchy plugin add https://github.com/v3moreno/omarchy-resizeable --enable
 ```
 
 ## Uninstall
 
 ```bash
-omarchy plugin remove omarchy-resizable.resizable
+omarchy plugin remove omarchy-resizeable.resizeable
 ```
 
 Disable or remove and the drop-in is deleted, Hyprland reloaded, and
@@ -25,7 +25,7 @@ Disable or remove and the drop-in is deleted, Hyprland reloaded, and
 
 ## How it works
 
-The service writes `~/.local/state/omarchy/toggles/hypr/omarchy-resizable.lua`
+The service writes `~/.local/state/omarchy/toggles/hypr/omarchy-resizeable.lua`
 on start. That directory is re-required on every Hyprland config load, which
 is what makes the setting survive reloads and restarts — a runtime `hyprctl`
 change wouldn't.
