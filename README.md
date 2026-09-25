@@ -36,6 +36,8 @@ up inert on the next reload instead of silently keeping the feature on.
 
 ## Notes
 
+- No dependencies beyond a stock Omarchy install (`hyprctl`, `sh`,
+  `notify-send` for the warning below).
 - `resize_on_border` is global. Tiled windows get border-drag too; there's no
   floating-only gate in Hyprland.
 - Needs `general:border_size > 0` — zero-width borders have nothing to grab.
